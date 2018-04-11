@@ -1,11 +1,11 @@
-package edu.asu.bsse.mkthomp.myplacesapp;
+package insua.mkthomp.placesapp;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by insuafamily on 4/11/18.
  */
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class PlaceDescription {
     public String name, description, category, addressTitle, addressStreet;
@@ -137,5 +137,4 @@ public class PlaceDescription {
         return temp;
     }
 }
-
 

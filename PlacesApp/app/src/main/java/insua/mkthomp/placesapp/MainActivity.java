@@ -1,4 +1,4 @@
-package edu.asu.bsse.mkthomp.myplacesapp;
+package insua.mkthomp.placesapp;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

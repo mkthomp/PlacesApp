@@ -1,8 +1,4 @@
-package edu.asu.bsse.mkthomp.myplacesapp;
-
-/**
- * Created by insuafamily on 4/11/18.
- */
+package insua.mkthomp.placesapp;
 
 import android.app.Activity;
 
