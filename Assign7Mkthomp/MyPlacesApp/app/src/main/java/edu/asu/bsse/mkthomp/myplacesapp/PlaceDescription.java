@@ -75,15 +75,15 @@ public class PlaceDescription implements Serializable{
         return addressStreet;
     }
 
-    public double getElevation() {
+    public Double getElevation() {
         return elevation;
     }
 
-    public double getLatitude() {
+    public Double getLatitude() {
         return latitude;
     }
 
-    public double getLongitude() {
+    public Double getLongitude() {
         return longitude;
     }
 

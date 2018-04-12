@@ -3,6 +3,9 @@ package edu.asu.bsse.mkthomp.myplacesapp;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -55,13 +58,44 @@ public class MainActivity extends AppCompatActivity implements ListView.OnItemCl
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        android.util.Log.d(this.getClass().getSimpleName(), "called onCreateOptionsMenu()");
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_activity_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    /*
+     * Implement onOptionsItemSelected(MenuItem item){} to handle clicks of buttons that are
+     * in the action bar.
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        android.util.Log.d(this.getClass().getSimpleName(), "called onOptionsItemSelected()");
+        Intent addPlace = new Intent(this, addPlaceActivity.class);
+        Intent calcGreatCircle = new Intent(this, calcGreatCircleActivity.class);
+        switch (item.getItemId()) {
+            case R.id.action_calcGreatCircle:
+                startActivity(calcGreatCircle);
+                return true;
+            case R.id.action_addPlace:
+                startActivity(addPlace);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+
+
+    @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id){
         String[] studNames = places.getNames();
         Arrays.sort(studNames);
         if(position >= 0 && position <= studNames.length) {
             Intent displayPlace = new Intent(this, PlaceDisplayActivity.class);
             displayPlace.putExtra("places", places);
-            displayPlace.putExtra("selected", studNames[position-1]);
+            displayPlace.putExtra("selected", studNames[position]);
             this.startActivityForResult(displayPlace, 1);
         }
     }

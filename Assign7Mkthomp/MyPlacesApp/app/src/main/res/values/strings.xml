@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MyPlacesApp</string>
+    <string name="action_calcGreatCircle">Calculate Great Circle Distance Icon</string>
+    <string name="action_addPlace">Add Place Icon</string>
 </resources>
