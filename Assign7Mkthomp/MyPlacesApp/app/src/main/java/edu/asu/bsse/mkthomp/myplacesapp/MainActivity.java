@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements ListView.OnItemCl
         Intent calcGreatCircle = new Intent(this, calcGreatCircleActivity.class);
         switch (item.getItemId()) {
             case R.id.action_calcGreatCircle:
+                calcGreatCircle.putExtra("places", places);
                 startActivity(calcGreatCircle);
                 return true;
             case R.id.action_addPlace:

@@ -2,4 +2,16 @@
     <string name="app_name">MyPlacesApp</string>
     <string name="action_calcGreatCircle">Calculate Great Circle Distance Icon</string>
     <string name="action_addPlace">Add Place Icon</string>
+    <string name="update">Update</string>
+    <string name="elevation">Elevation</string>
+    <string name="description">Description</string>
+    <string name="add">ADD</string>
+    <string name="address_title">Address Title</string>
+    <string name="street_address">Street Address</string>
+    <string name="longitude">Longitude</string>
+    <string name="name">Name</string>
+    <string name="category">Category</string>
+    <string name="elvation">Elvation</string>
+    <string name="latitude">Latitude</string>
+    <string name="click_on_a_place_to_view_and_edit_details">Click on a Place to View and Edit details</string>
 </resources>
