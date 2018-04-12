@@ -1,20 +1,23 @@
 package edu.asu.bsse.mkthomp.myplacesapp;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 public class PlaceDisplayActivity extends AppCompatActivity {
-
+    private static final boolean debugon = true;
     private EditText description, addrTitle, addrStreet, lat, lon, elevation, category;
     private TextView name;
     private String myPlaceName;
@@ -61,6 +64,34 @@ public class PlaceDisplayActivity extends AppCompatActivity {
     }
 
     private void updatePlace() {
+        try{
+            PlaceDB db = new PlaceDB((Context)this);
+            SQLiteDatabase plcDB = db.openDB();
+            ContentValues hm = new ContentValues();
+            String whereClause = "name="+ "\'" + myPlaceName.toString() + "\'";
+            hm.put("name", myPlaceName);
+            hm.put("addressTitle", addrTitle.getText().toString());
+            hm.put("addressStreet", addrStreet.getText().toString());
+            hm.put("elevation", Double.parseDouble(elevation.getText().toString()));
+            hm.put("latitude", Double.parseDouble(lat.getText().toString()));
+            hm.put("longitude", Double.parseDouble(lon.getText().toString()));
+            hm.put("description", description.getText().toString());
+            hm.put("category", category.getText().toString());
+            plcDB.update("places", hm, whereClause,null);
+            plcDB.close();
+            db.close();
+
+            debug("TESTING --> UPDATE DB", "addrTitle= \t" + hm.get("addressTitle") + "addrStreet= \t" + hm.get("addressStreet")
+                                                + "category= \t" + hm.get("category"));
+
+            Intent backToMain;
+            backToMain = new Intent(this, MainActivity.class);
+            startActivity(backToMain);
+
+        } catch (Exception ex){
+            android.util.Log.w(this.getClass().getSimpleName(),"Exception adding student information: "+
+                    ex.getMessage());
+        }
     }
 
     @Override
@@ -96,12 +127,29 @@ public class PlaceDisplayActivity extends AppCompatActivity {
         try {
             PlaceDB db = new PlaceDB((Context) this);
             SQLiteDatabase plcDB = db.openDB();
-            //crsDB.execSQL(delete);
             plcDB.execSQL(delete, new String[]{myPlaceName});
             plcDB.close();
             db.close();
         }catch(Exception e){
             android.util.Log.w(this.getClass().getSimpleName()," error trying to delete student");
+        }
+    }
+
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event){
+        // note that inputType and keyboard actions imeOptions must be defined to manage the keyboard
+        // these can be defined in the xml as an attribute of the EditText.
+        // returning false from this method
+        android.util.Log.d(this.getClass().getSimpleName(), "onEditorAction: keycode " +
+                ((event == null) ? "null" : event.toString()) + " actionId " + actionId);
+        if(actionId== EditorInfo.IME_ACTION_NEXT || actionId == EditorInfo.IME_ACTION_DONE){
+            android.util.Log.d(this.getClass().getSimpleName(),"entry is: "+v.getText().toString());
+        }
+        return false; // without returning false, the keyboard will not disappear or move to next field
+    }
+
+    private void debug(String hdr, String msg){
+        if(debugon){
+            android.util.Log.d(hdr,msg);
         }
     }
 

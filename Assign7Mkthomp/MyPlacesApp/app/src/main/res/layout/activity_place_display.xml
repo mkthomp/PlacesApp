@@ -15,6 +15,7 @@
         android:ems="10"
         android:inputType="text"
         android:textSize="14sp"
+        android:imeOptions="actionNext"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -30,6 +31,7 @@
         android:ems="10"
         android:inputType="text"
         android:textSize="14sp"
+        android:imeOptions="actionNext"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editDescription" />
@@ -44,6 +46,7 @@
         android:ems="10"
         android:inputType="text"
         android:textSize="14sp"
+        android:imeOptions="actionNext"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editAddrTitle" />
@@ -58,6 +61,7 @@
         android:ems="10"
         android:inputType="text|number|numberDecimal"
         android:textSize="14sp"
+        android:imeOptions="actionNext"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editAddrStreet" />
@@ -72,6 +76,7 @@
         android:ems="10"
         android:inputType="text|number|numberDecimal"
         android:textSize="14sp"
+        android:imeOptions="actionNext"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editLatitude" />
@@ -86,6 +91,7 @@
         android:ems="10"
         android:inputType="text|number|numberDecimal"
         android:textSize="14sp"
+        android:imeOptions="actionNext"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editLongitude" />
@@ -100,6 +106,7 @@
         android:ems="10"
         android:inputType="text"
         android:textSize="14sp"
+        android:imeOptions="actionDone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editElevation" />
