@@ -19,9 +19,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity implements ListView.OnItemClickListener {
+    private static final boolean debugon = true;
 
     private ListView placesList;
-    private PlaceDescription place;
+    //private PlaceDescription place;
     private PlaceLibrary placesFromJSONfile, placesFromDatabase;
 
     private String[] labels;
@@ -52,12 +53,13 @@ public class MainActivity extends AppCompatActivity implements ListView.OnItemCl
 
     private void createPlaceLibrary() {
         placesFromDatabase = new PlaceLibrary();
-        place = new PlaceDescription();
+        //place = new PlaceDescription();
         try {
             PlaceDB db = new PlaceDB(this);
             SQLiteDatabase plcDB = db.openDB();
             Cursor cursor = plcDB.rawQuery("select * from places;", new String[]{});
             while(cursor.moveToNext()) {
+                PlaceDescription place = new PlaceDescription();
                 place.setName(cursor.getString(0));
                 place.setAddressTitle(cursor.getString(1));
                 place.setAddressStreet(cursor.getString(2));
@@ -67,6 +69,9 @@ public class MainActivity extends AppCompatActivity implements ListView.OnItemCl
                 place.setDescription(cursor.getString(6));
                 place.setCategory(cursor.getString(7));
                 placesFromDatabase.addPlace(place.getName(), place);
+                debug("PlaceDB --> checkDB","PlaceLibrary has PlaceName: "+ place.getName()+
+                        "\tAddressTitle: "+place.getAddressTitle()+"\tAddressStreet: "+place.getAddressStreet()+"\tElevation: "+place.getElevation()
+                        +"\tLatitude: "+place.getLatitude()+"\tLongitude: "+place.getLongitude()+"\tDescription: "+place.getDescription() +"\tCategory: "+place.getCategory());
             }
         }catch (Exception e) {
             android.util.Log.w(this.getClass().getSimpleName(), "unable to create place library");
@@ -74,6 +79,10 @@ public class MainActivity extends AppCompatActivity implements ListView.OnItemCl
     }
 
     private void prepareAdapter(){
+
+        /*
+         * Prepares the Array Adapter using the JOSN file places.json which is located in the raw resouce folder
+         */
 //        this.placeNames = placesFromJSONfile.getNames();
 //        Arrays.sort(this.placeNames);
 //        al = new ArrayList<String>();
@@ -81,6 +90,10 @@ public class MainActivity extends AppCompatActivity implements ListView.OnItemCl
 //        for (int i = 0; i < placeNames.length; i++) {
 //            al.add(placeNames[i]);
 //        }
+
+         /*
+         * Prepares the Array Adapter using a database
+         */
         try {
             PlaceDB db = new PlaceDB(this);
             SQLiteDatabase plcDB = db.openDB();
@@ -113,7 +126,8 @@ public class MainActivity extends AppCompatActivity implements ListView.OnItemCl
         Intent calcGreatCircle = new Intent(this, calcGreatCircleActivity.class);
         switch (item.getItemId()) {
             case R.id.action_calcGreatCircle:
-                calcGreatCircle.putExtra("places", placesFromJSONfile);
+                //calcGreatCircle.putExtra("places", placesFromJSONfile);
+                calcGreatCircle.putExtra("places", placesFromDatabase);
                 startActivity(calcGreatCircle);
                 return true;
             case R.id.action_addPlace:
@@ -124,19 +138,24 @@ public class MainActivity extends AppCompatActivity implements ListView.OnItemCl
         }
     }
 
-
-
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id){
-        String[] studNames = placesFromJSONfile.getNames();
+        //String[] studNames = placesFromJSONfile.getNames();
+        String[] studNames = placesFromDatabase.getNames();
         Arrays.sort(studNames);
         if(position >= 0 && position <= studNames.length) {
             Intent displayPlace = new Intent(this, PlaceDisplayActivity.class);
-            displayPlace.putExtra("places", placesFromJSONfile);
+            //displayPlace.putExtra("places", placesFromJSONfile);
+            displayPlace.putExtra("places", placesFromDatabase);
             displayPlace.putExtra("selected", studNames[position]);
             this.startActivityForResult(displayPlace, 1);
         }
     }
 
+    private void debug(String hdr, String msg){
+        if(debugon){
+            android.util.Log.d(hdr,msg);
+        }
+    }
 
 }

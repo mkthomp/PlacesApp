@@ -140,7 +140,7 @@
         app:layout_constraintTop_toBottomOf="@+id/addCategory" />
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/addName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
