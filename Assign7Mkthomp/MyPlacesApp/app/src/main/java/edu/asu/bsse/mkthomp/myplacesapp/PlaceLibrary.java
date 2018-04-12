@@ -26,6 +26,10 @@ public class PlaceLibrary implements Serializable{
     private static final boolean debugOn = false;
     private int libCount = 0;
 
+    PlaceLibrary() {
+        placeCollection = new Hashtable<String, PlaceDescription>();
+    }
+
     PlaceLibrary(Activity parent) throws JSONException {
         debug("creating a new student collection");
         placeCollection = new Hashtable<String, PlaceDescription>();
@@ -87,6 +91,10 @@ public class PlaceLibrary implements Serializable{
             ret = aPlace;
         }
         return ret;
+    }
+
+    public void addPlace(String aName, PlaceDescription aPlace) {
+        placeCollection.put(aName, aPlace);
     }
 
 }

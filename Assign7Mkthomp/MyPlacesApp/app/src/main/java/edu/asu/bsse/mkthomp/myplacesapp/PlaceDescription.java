@@ -19,9 +19,9 @@ public class PlaceDescription implements Serializable{
         category = "";
         addressTitle = "";
         addressStreet = "";
-        elevation = 0;
-        latitude = 0;
-        longitude = 0;
+        elevation = 0.0;
+        latitude = 0.0;
+        longitude = 0.0;
     }
 
     public PlaceDescription(String jsonStr){

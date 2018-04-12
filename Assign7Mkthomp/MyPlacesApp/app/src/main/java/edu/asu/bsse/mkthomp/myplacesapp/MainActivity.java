@@ -1,6 +1,8 @@
 package edu.asu.bsse.mkthomp.myplacesapp;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -20,11 +22,11 @@ public class MainActivity extends AppCompatActivity implements ListView.OnItemCl
 
     private ListView placesList;
     private PlaceDescription place;
-    private PlaceLibrary places;
+    private PlaceLibrary placesFromJSONfile, placesFromDatabase;
 
     private String[] labels;
     private int[] ids;
-    private ArrayList<String> fillMaps;
+    private ArrayList<String> al;
 
     private String[] placeNames;
 
@@ -36,24 +38,59 @@ public class MainActivity extends AppCompatActivity implements ListView.OnItemCl
         placesList = (ListView)findViewById(R.id.placeListView);
 
         try {
-            places = new PlaceLibrary(this);
+            placesFromJSONfile = new PlaceLibrary(this);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         this.prepareAdapter();
-        ArrayAdapter aa = new ArrayAdapter(this, R.layout.place_list_item, R.id.place_name, fillMaps);
+        this.createPlaceLibrary();
+        ArrayAdapter aa = new ArrayAdapter(this, R.layout.place_list_item, R.id.place_name, al);
         placesList.setAdapter(aa);
         placesList.setOnItemClickListener(this);
     }
 
-    private void prepareAdapter(){
-        this.placeNames = places.getNames();
-        Arrays.sort(this.placeNames);
-        fillMaps = new ArrayList<String>();
+    private void createPlaceLibrary() {
+        placesFromDatabase = new PlaceLibrary();
+        place = new PlaceDescription();
+        try {
+            PlaceDB db = new PlaceDB(this);
+            SQLiteDatabase plcDB = db.openDB();
+            Cursor cursor = plcDB.rawQuery("select * from places;", new String[]{});
+            while(cursor.moveToNext()) {
+                place.setName(cursor.getString(0));
+                place.setAddressTitle(cursor.getString(1));
+                place.setAddressStreet(cursor.getString(2));
+                place.setElevation((int) cursor.getDouble(3));
+                place.setLatitude((int) cursor.getDouble(4));
+                place.setLongitude((int) cursor.getDouble(5));
+                place.setDescription(cursor.getString(6));
+                place.setCategory(cursor.getString(7));
+                placesFromDatabase.addPlace(place.getName(), place);
+            }
+        }catch (Exception e) {
+            android.util.Log.w(this.getClass().getSimpleName(), "unable to create place library");
+        }
+    }
 
-        for (int i = 0; i < placeNames.length; i++) {
-            fillMaps.add(placeNames[i]);
+    private void prepareAdapter(){
+//        this.placeNames = placesFromJSONfile.getNames();
+//        Arrays.sort(this.placeNames);
+//        al = new ArrayList<String>();
+//
+//        for (int i = 0; i < placeNames.length; i++) {
+//            al.add(placeNames[i]);
+//        }
+        try {
+            PlaceDB db = new PlaceDB(this);
+            SQLiteDatabase plcDB = db.openDB();
+            Cursor cursor = plcDB.rawQuery("select name from places;", new String[]{});
+            al = new ArrayList<>();
+            while(cursor.moveToNext()) {
+                al.add(cursor.getString(0));
+            }
+        }catch(Exception e) {
+            android.util.Log.w(this.getClass().getSimpleName(), "unable to prepare adapter");
         }
     }
 
@@ -76,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements ListView.OnItemCl
         Intent calcGreatCircle = new Intent(this, calcGreatCircleActivity.class);
         switch (item.getItemId()) {
             case R.id.action_calcGreatCircle:
-                calcGreatCircle.putExtra("places", places);
+                calcGreatCircle.putExtra("places", placesFromJSONfile);
                 startActivity(calcGreatCircle);
                 return true;
             case R.id.action_addPlace:
@@ -91,11 +128,11 @@ public class MainActivity extends AppCompatActivity implements ListView.OnItemCl
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id){
-        String[] studNames = places.getNames();
+        String[] studNames = placesFromJSONfile.getNames();
         Arrays.sort(studNames);
         if(position >= 0 && position <= studNames.length) {
             Intent displayPlace = new Intent(this, PlaceDisplayActivity.class);
-            displayPlace.putExtra("places", places);
+            displayPlace.putExtra("places", placesFromJSONfile);
             displayPlace.putExtra("selected", studNames[position]);
             this.startActivityForResult(displayPlace, 1);
         }
