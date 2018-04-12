@@ -1,5 +1,6 @@
 package edu.asu.bsse.mkthomp.myplacesapp;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -38,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements ListView.OnItemCl
         }
 
         this.prepareAdapter();
-        ArrayAdapter aa = new ArrayAdapter(this, R.layout.activity_main, fillMaps);
+        ArrayAdapter aa = new ArrayAdapter(this, R.layout.place_list_item, R.id.place_name, fillMaps);
         placesList.setAdapter(aa);
         placesList.setOnItemClickListener(this);
     }
@@ -54,7 +55,16 @@ public class MainActivity extends AppCompatActivity implements ListView.OnItemCl
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id){
+        String[] studNames = places.getNames();
+        Arrays.sort(studNames);
+        if(position >= 0 && position <= studNames.length) {
+            Intent displayPlace = new Intent(this, PlaceDisplayActivity.class);
+            displayPlace.putExtra("places", places);
+            displayPlace.putExtra("selected", studNames[position-1]);
+            this.startActivityForResult(displayPlace, 1);
+        }
     }
+
+
 }

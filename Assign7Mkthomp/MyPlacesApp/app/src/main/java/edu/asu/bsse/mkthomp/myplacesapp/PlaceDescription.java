@@ -7,7 +7,9 @@ package edu.asu.bsse.mkthomp.myplacesapp;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class PlaceDescription {
+import java.io.Serializable;
+
+public class PlaceDescription implements Serializable{
     public String name, description, category, addressTitle, addressStreet;
     public double elevation, latitude, longitude;
 
