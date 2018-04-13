@@ -26,7 +26,7 @@ import java.io.Serializable;
  * A PlaceDescription object can serialze to and from a Json representation.
  *
  * @author Mary Insua mkthomp@asu.edu
- * @version 1.0
+ * @version April 13, 2018
  */
 
 public class PlaceDescription implements Serializable{

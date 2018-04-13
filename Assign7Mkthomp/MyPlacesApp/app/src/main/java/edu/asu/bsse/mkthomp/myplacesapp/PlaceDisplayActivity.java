@@ -2,8 +2,10 @@ package edu.asu.bsse.mkthomp.myplacesapp;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -15,6 +17,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Copyright (c) 2018 Mary Insua,
@@ -39,18 +42,17 @@ import android.widget.TextView;
  * using the trash can icon in the toolbar.
  *
  * @author Mary Insua mkthomp@asu.edu
- * @version 1.0
+ * @version April 13, 2018
  */
 
 public class PlaceDisplayActivity extends AppCompatActivity {
-    private static final boolean debugon = true;
     private EditText description, addrTitle, addrStreet, lat, lon, elevation, category;
     private TextView name;
     private String myPlaceName;
     private PlaceLibrary places;
     private PlaceDescription myPlace;
     private Button updateBtn;
-
+    private AlertDialog deleteAlert;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,15 +109,15 @@ public class PlaceDisplayActivity extends AppCompatActivity {
             plcDB.close();
             db.close();
 
-            debug("TESTING --> UPDATE DB", "addrTitle= \t" + hm.get("addressTitle") + "addrStreet= \t" + hm.get("addressStreet")
-                                                + "category= \t" + hm.get("category"));
+            Toast.makeText(this, myPlaceName + " successfully updated!", Toast.LENGTH_SHORT).show();
 
             Intent backToMain;
             backToMain = new Intent(this, MainActivity.class);
             startActivity(backToMain);
 
         } catch (Exception ex){
-            android.util.Log.w(this.getClass().getSimpleName(),"Exception adding student information: "+
+            Toast.makeText(this, "Unable to update " + myPlaceName + ".", Toast.LENGTH_SHORT).show();
+            android.util.Log.w(this.getClass().getSimpleName(),"Exception Updating Place: "+
                     ex.getMessage());
         }
     }
@@ -135,11 +137,11 @@ public class PlaceDisplayActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         android.util.Log.d(this.getClass().getSimpleName(), "called onOptionsItemSelected()");
-        Intent backToMain = new Intent(this, MainActivity.class);
+        //Intent backToMain = new Intent(this, MainActivity.class);
         switch (item.getItemId()) {
             case R.id.delete_icon:
-                deletePlace();
-                startActivity(backToMain);
+                setUpDeleteAlert();
+                deleteAlert.show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -149,22 +151,20 @@ public class PlaceDisplayActivity extends AppCompatActivity {
     private void deletePlace() {
         android.util.Log.d(this.getClass().getSimpleName(), "remove this Place");
         String delete = "delete from places where places.name=?;";
-
         try {
             PlaceDB db = new PlaceDB((Context) this);
             SQLiteDatabase plcDB = db.openDB();
             plcDB.execSQL(delete, new String[]{myPlaceName});
             plcDB.close();
             db.close();
+            Intent backToMain = new Intent(this, MainActivity.class);
+            startActivity(backToMain);
         }catch(Exception e){
-            android.util.Log.w(this.getClass().getSimpleName()," error trying to delete student");
+            android.util.Log.w(this.getClass().getSimpleName()," error trying to delete place");
         }
     }
 
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event){
-        // note that inputType and keyboard actions imeOptions must be defined to manage the keyboard
-        // these can be defined in the xml as an attribute of the EditText.
-        // returning false from this method
         android.util.Log.d(this.getClass().getSimpleName(), "onEditorAction: keycode " +
                 ((event == null) ? "null" : event.toString()) + " actionId " + actionId);
         if(actionId== EditorInfo.IME_ACTION_NEXT || actionId == EditorInfo.IME_ACTION_DONE){
@@ -173,10 +173,23 @@ public class PlaceDisplayActivity extends AppCompatActivity {
         return false; // without returning false, the keyboard will not disappear or move to next field
     }
 
-    private void debug(String hdr, String msg){
-        if(debugon){
-            android.util.Log.d(hdr,msg);
-        }
+    private void setUpDeleteAlert() {
+        deleteAlert = new AlertDialog.Builder(this).create();
+        deleteAlert.setMessage("Delete Place from Database?");
+        deleteAlert.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deletePlace();
+                    }
+                });
+        deleteAlert.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //do nothing
+                    }
+                });
     }
 
 }

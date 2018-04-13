@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.Arrays;
 
@@ -35,12 +36,14 @@ import java.util.Arrays;
  * to add the new place to the database.
  *
  * @author Mary Insua mkthomp@asu.edu
- * @version 1.0
+ * @version April 13, 2018
  */
 
 public class addPlaceActivity extends AppCompatActivity {
 
     private EditText name, desc, addrTitle, addrStreet, lat, lon, elevation, cat;
+    private String nameToAdd, descToAdd, titleToAdd, addrToAdd, catToAdd;
+    private Double latToAdd, lonToAdd, elevationToAdd;
     private Button addBtn;
 
     @Override
@@ -71,14 +74,47 @@ public class addPlaceActivity extends AppCompatActivity {
             PlaceDB db = new PlaceDB((Context)this);
             SQLiteDatabase plcDB = db.openDB();
             ContentValues hm = new ContentValues();
-            hm.put("name", name.getText().toString());
-            hm.put("addressTitle", addrTitle.getText().toString());
-            hm.put("addressStreet", addrStreet.getText().toString());
-            hm.put("elevation", Double.parseDouble(elevation.getText().toString()));
-            hm.put("latitude", Double.parseDouble(lat.getText().toString()));
-            hm.put("longitude", Double.parseDouble(lon.getText().toString()));
-            hm.put("description", desc.getText().toString());
-            hm.put("category", cat.getText().toString());
+
+            if (name.getText() != null) {
+                nameToAdd = name.getText().toString();
+            }else {nameToAdd = "";}
+            hm.put("name", nameToAdd);
+
+            if (addrTitle.getText() != null) {
+                titleToAdd = addrTitle.getText().toString();
+            }else {titleToAdd = "";}
+            hm.put("addressTitle", titleToAdd);
+
+            if (addrStreet.getText() != null) {
+                addrToAdd = addrStreet.getText().toString();
+            }else {addrToAdd = "";}
+            hm.put("addressStreet", addrToAdd);
+
+            if (elevation.getText() != null && elevation.getText().toString() != "") {
+                elevationToAdd = Double.parseDouble(elevation.getText().toString());
+            }else {elevationToAdd = 0.0;}
+            hm.put("elevation", elevationToAdd);
+
+            if (lat.getText() != null && lat.getText().toString() != "") {
+                latToAdd = Double.parseDouble(lat.getText().toString());
+            }else {latToAdd = 0.0;}
+            hm.put("latitude", latToAdd);
+
+            if (lon.getText() != null && lon.getText().toString() != "") {
+                lonToAdd = Double.parseDouble(lon.getText().toString());
+            }else {lonToAdd = 0.0;}
+            hm.put("longitude", lonToAdd);
+
+            if (desc.getText() != null) {
+                descToAdd = desc.getText().toString();
+            }else {descToAdd = "";}
+            hm.put("description", descToAdd);
+
+            if (cat.getText() != null) {
+                catToAdd = cat.getText().toString();
+            }else {catToAdd = "";}
+            hm.put("category", catToAdd);
+
             plcDB.insert("places",null, hm);
             plcDB.close();
             db.close();
@@ -89,7 +125,8 @@ public class addPlaceActivity extends AppCompatActivity {
             startActivity(backToMain);
 
         } catch (Exception ex){
-            android.util.Log.w(this.getClass().getSimpleName(),"Exception adding student information: "+
+            Toast.makeText(this, "Please fill in all fields to add a new place.", Toast.LENGTH_LONG).show();
+            android.util.Log.w(this.getClass().getSimpleName(),"Exception adding Place Details: "+
                     ex.getMessage());
         }
     }

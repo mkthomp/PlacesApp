@@ -38,7 +38,7 @@ import java.util.Arrays;
  * Distance and Initial Bearing will be displayed.
  *
  * @author Mary Insua mkthomp@asu.edu
- * @version 1.0
+ * @version April 13, 2018
  */
 
 public class calcGreatCircleActivity extends AppCompatActivity implements Spinner.OnItemSelectedListener {

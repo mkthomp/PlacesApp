@@ -36,7 +36,7 @@ import java.util.Iterator;
  * JSON file.
  *
  * @author Mary Insua mkthomp@asu.edu
- * @version 1.0
+ * @version April 13 2018
  */
 
 public class PlaceLibrary implements Serializable{
@@ -49,12 +49,12 @@ public class PlaceLibrary implements Serializable{
     }
 
     PlaceLibrary(Activity parent) throws JSONException {
-        debug("creating a new student collection");
+        debug("creating a new places collection");
         placeCollection = new Hashtable<String, PlaceDescription>();
         try {
             this.resetFromJsonFile(parent);
         } catch (Exception ex) {
-            android.util.Log.d(this.getClass().getSimpleName(), "error resetting from students json file" + ex.getMessage());
+            android.util.Log.d(this.getClass().getSimpleName(), "error resetting from places json file" + ex.getMessage());
         }
     }
 
@@ -81,7 +81,7 @@ public class PlaceLibrary implements Serializable{
             while (it.hasNext()) {
                 String pName = it.next();
                 JSONObject aPlace = placesJson.optJSONObject(pName);
-                debug("importing student named " + pName + " json is: " + aPlace.toString());
+                debug("importing place named " + pName + " json is: " + aPlace.toString());
                 if (aPlace != null) {
                     PlaceDescription place = new PlaceDescription(aPlace.toString());
                     placeCollection.put(pName, place);

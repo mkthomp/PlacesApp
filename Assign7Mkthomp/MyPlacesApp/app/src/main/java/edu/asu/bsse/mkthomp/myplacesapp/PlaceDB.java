@@ -32,8 +32,8 @@ import java.sql.SQLException;
  * This class accesses the database from the bundle if it does not
  * already exist in the
  *
- * @author Mary Insua mkthomp@asu.edu
- * @version 1.0
+ * @author Mary Insua mkthomp@asu.edu, & Tim Lindquist
+ * @version April 13, 2018
  */
 
 public class PlaceDB extends SQLiteOpenHelper{
@@ -69,7 +69,7 @@ public class PlaceDB extends SQLiteOpenHelper{
      * @return false if the database file needs to be copied from the assets directory, true
      * otherwise.
      */
-    private boolean checkDB(){    //does the database exist and is it initialized?
+    private boolean checkDB(){
         SQLiteDatabase checkDB = null;
         boolean crsTabExists = false;
         try{

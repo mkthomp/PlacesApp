@@ -3,6 +3,7 @@ package edu.asu.bsse.mkthomp.myplacesapp;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -39,7 +40,7 @@ import java.util.Arrays;
  * and add new places to the database.
  *
  * @author Mary Insua mkthomp@asu.edu
- * @version 1.0
+ * @version April 13, 2018
  */
 
 
@@ -47,13 +48,8 @@ public class MainActivity extends AppCompatActivity implements ListView.OnItemCl
     private static final boolean debugon = true;
 
     private ListView placesList;
-    //private PlaceDescription place;
     private PlaceLibrary placesFromJSONfile, placesFromDatabase;
-
-    private String[] labels;
-    private int[] ids;
     private ArrayList<String> al;
-
     private String[] placeNames;
 
     @Override
@@ -78,7 +74,6 @@ public class MainActivity extends AppCompatActivity implements ListView.OnItemCl
 
     private void createPlaceLibrary() {
         placesFromDatabase = new PlaceLibrary();
-        //place = new PlaceDescription();
         try {
             PlaceDB db = new PlaceDB(this);
             SQLiteDatabase plcDB = db.openDB();
