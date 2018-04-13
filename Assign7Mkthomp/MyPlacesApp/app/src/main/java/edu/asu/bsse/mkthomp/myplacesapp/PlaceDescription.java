@@ -1,13 +1,33 @@
 package edu.asu.bsse.mkthomp.myplacesapp;
 
-/**
- * Created by insuafamily on 4/11/18.
- */
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+
+/**
+ * Copyright (c) 2018 Mary Insua,
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Purpose: a container for Place attributes
+ *
+ * Users of this class may access and set values of each attribute.
+ * A PlaceDescription object can serialze to and from a Json representation.
+ *
+ * @author Mary Insua mkthomp@asu.edu
+ * @version 1.0
+ */
 
 public class PlaceDescription implements Serializable{
     public String name, description, category, addressTitle, addressStreet;

@@ -14,6 +14,33 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * Copyright (c) 2018 Mary Insua,
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Purpose: an activity that calculates the Great Circle Distance and
+ * Initial Bearing between two locations and displays them to the user.
+ *
+ * When a user selects a the "map" icon from the MainActivity toolbar,
+ * this activity is started.  From this screen, the user
+ * can choose two locations from the spinners, and the Great Circle
+ * Distance and Initial Bearing will be displayed.
+ *
+ * @author Mary Insua mkthomp@asu.edu
+ * @version 1.0
+ */
+
 public class calcGreatCircleActivity extends AppCompatActivity implements Spinner.OnItemSelectedListener {
 
     private Spinner spin1, spin2;

@@ -16,6 +16,32 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+/**
+ * Copyright (c) 2018 Mary Insua,
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Purpose: an activity that displays a place description.
+ *
+ * When a user selects a place from the MainActivity, the descriptors for the
+ * place are displayed in the PlaceDisplayActivity.  From this screen, the user
+ * can update the PlaceDescription details or delete the place from the database
+ * using the trash can icon in the toolbar.
+ *
+ * @author Mary Insua mkthomp@asu.edu
+ * @version 1.0
+ */
+
 public class PlaceDisplayActivity extends AppCompatActivity {
     private static final boolean debugon = true;
     private EditText description, addrTitle, addrStreet, lat, lon, elevation, category;
