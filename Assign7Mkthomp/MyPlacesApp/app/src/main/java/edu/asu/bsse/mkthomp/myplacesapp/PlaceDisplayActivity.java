@@ -51,7 +51,7 @@ public class PlaceDisplayActivity extends AppCompatActivity {
     private String myPlaceName;
     private PlaceLibrary places;
     private PlaceDescription myPlace;
-    private Button updateBtn;
+    private Button updateBtn, mapBtn;
     private AlertDialog deleteAlert;
 
     @Override
@@ -87,6 +87,13 @@ public class PlaceDisplayActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 updatePlace();
+            }
+        });
+        mapBtn = findViewById(R.id.button2);
+        mapBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showMap();
             }
         });
     }
@@ -146,6 +153,13 @@ public class PlaceDisplayActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void showMap() {
+        Intent i = new Intent(this, MapActivity.class);
+        i.putExtra("places", places);
+        i.putExtra("selected", myPlaceName);
+        startActivity(i);
     }
 
     private void deletePlace() {

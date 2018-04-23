@@ -126,25 +126,39 @@ public class calcGreatCircleActivity extends AppCompatActivity implements Spinne
     }
 
     private void calculateGreatCircleDistance(Double latitude1, Double longitude1, Double latitude2, Double longitude2) {
-        double x1 = Math.toRadians(latitude1);
-        double y1 = Math.toRadians(longitude1);
-        double x2 = Math.toRadians(latitude2);
-        double y2 = Math.toRadians(longitude2);
+//        double x1 = Math.toRadians(latitude1);
+//        double y1 = Math.toRadians(longitude1);
+//        double x2 = Math.toRadians(latitude2);
+//        double y2 = Math.toRadians(longitude2);
+//
+//        double a = Math.pow(Math.sin((x2-x1)/2), 2)
+//                + Math.cos(x1) * Math.cos(x2) * Math.pow(Math.sin((y2-y1)/2), 2);
+//
+//        // great circle distance in radians
+//        double angle2 = 2 * Math.asin(Math.min(1, Math.sqrt(a)));
+//
+//        // convert back to degrees
+//        angle2 = Math.toDegrees(angle2);
+//
+//        // each degree on a great circle of Earth is 60 nautical miles
+//        double distance2 = 60 * angle2;
+//
+//        gcd = format1.format(distance2 * 1.852);
 
-        double a = Math.pow(Math.sin((x2-x1)/2), 2)
-                + Math.cos(x1) * Math.cos(x2) * Math.pow(Math.sin((y2-y1)/2), 2);
+        int R = (6371);
+        double φ1 = Math.toRadians(latitude1);
+        double φ2 = Math.toRadians(latitude2);
+        double Δφ = Math.toRadians(latitude2-latitude1);
+        double Δλ = Math.toRadians(longitude2-longitude1);
 
-        // great circle distance in radians
-        double angle2 = 2 * Math.asin(Math.min(1, Math.sqrt(a)));
+        double a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+                Math.cos(φ1) * Math.cos(φ2) *
+                        Math.sin(Δλ/2) * Math.sin(Δλ/2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
-        // convert back to degrees
-        angle2 = Math.toDegrees(angle2);
+        double d = (R * c);
 
-        // each degree on a great circle of Earth is 60 nautical miles
-        double distance2 = 60 * angle2;
-
-        gcd = format1.format(distance2 * 1.852);
-
+        gcd = format1.format(d);
     }
 
     private void calculateInitialBearing(Double latitude1, Double longitude1, Double latitude2, Double longitude2) {
@@ -153,8 +167,8 @@ public class calcGreatCircleActivity extends AppCompatActivity implements Spinne
         double x2 = Math.toRadians(latitude2);
         double y2 = Math.toRadians(longitude2);
 
-        double x = Math.sin(y2 - y1) * Math.cos(x2);
-        double y = Math.cos(x1) * Math.sin(x2) - Math.sin(x1) * Math.cos(x2) * Math.cos(y2-y1);
+        double y = Math.sin(y2 - y1) * Math.cos(x2);
+        double x = Math.cos(x1) * Math.sin(x2) - Math.sin(x1) * Math.cos(x2) * Math.cos(y2-y1);
         double bearing = Math.toDegrees(Math.atan2(y,x));
 
         ib = format2.format(bearing);

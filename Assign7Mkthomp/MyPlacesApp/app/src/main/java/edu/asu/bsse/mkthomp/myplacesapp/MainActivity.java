@@ -3,9 +3,8 @@ package edu.asu.bsse.mkthomp.myplacesapp;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -47,6 +46,7 @@ import java.util.Arrays;
 public class MainActivity extends AppCompatActivity implements ListView.OnItemClickListener {
     private static final boolean debugon = true;
 
+    private static final int SETTINGS_RESULT = 2;
     private ListView placesList;
     private PlaceLibrary placesFromJSONfile, placesFromDatabase;
     private ArrayList<String> al;
@@ -152,6 +152,10 @@ public class MainActivity extends AppCompatActivity implements ListView.OnItemCl
                 return true;
             case R.id.action_addPlace:
                 startActivity(addPlace);
+                return true;
+            case R.id.menu_settings:
+                Intent settings = new Intent(this, SettingsActivity.class);
+                startActivityForResult(settings, SETTINGS_RESULT);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
