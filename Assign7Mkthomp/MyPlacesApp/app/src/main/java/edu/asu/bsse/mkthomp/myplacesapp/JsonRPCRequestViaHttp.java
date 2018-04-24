@@ -18,9 +18,11 @@ public class JsonRPCRequestViaHttp {
     private final Map<String, String> headers;
     private URL url;
     private String requestData;
+    private MainActivity parent;
 
-    public JsonRPCRequestViaHttp(URL url) {
+    public JsonRPCRequestViaHttp(URL url, MainActivity parent) {
         this.url = url;
+        this.parent = parent;
         this.headers = new HashMap<String, String>();
     }
 

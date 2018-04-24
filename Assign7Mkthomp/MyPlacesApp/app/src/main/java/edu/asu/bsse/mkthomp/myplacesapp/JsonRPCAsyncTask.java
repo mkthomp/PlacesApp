@@ -29,7 +29,7 @@ public class JsonRPCAsyncTask extends AsyncTask<MethodInformation, Integer, Meth
             String requestData = "{ \"jsonrpc\":\"2.0\", \"method\":\"" + aRequest[0].method + "\", \"params\":" + ja.toString() +
                     ",\"id\":3}";
             android.util.Log.d(this.getClass().getSimpleName(), "requestData: " + requestData + " url: " + aRequest[0].urlString);
-            JsonRPCRequestViaHttp conn = new JsonRPCRequestViaHttp((new URL(aRequest[0].urlString)));
+            JsonRPCRequestViaHttp conn = new JsonRPCRequestViaHttp((new URL(aRequest[0].urlString)), null);
             String resultStr = conn.call(requestData);
             aRequest[0].resultAsJson = resultStr;
         } catch (Exception ex) {

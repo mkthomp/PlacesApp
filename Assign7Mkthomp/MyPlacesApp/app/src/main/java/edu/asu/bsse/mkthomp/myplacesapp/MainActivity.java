@@ -51,6 +51,8 @@ public class MainActivity extends AppCompatActivity implements ListView.OnItemCl
     private PlaceLibrary placesFromJSONfile, placesFromDatabase;
     private ArrayList<String> al;
     private String[] placeNames;
+    public ArrayAdapter<String> aa;
+    private String URL = "http://10.0.2.2:8080";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,9 +69,19 @@ public class MainActivity extends AppCompatActivity implements ListView.OnItemCl
 
         this.prepareAdapter();
         this.createPlaceLibrary();
-        ArrayAdapter aa = new ArrayAdapter(this, R.layout.place_list_item, R.id.place_name, al);
+        aa = new ArrayAdapter(this, R.layout.place_list_item, R.id.place_name, al);
         placesList.setAdapter(aa);
         placesList.setOnItemClickListener(this);
+
+        // initiate request to server to get the names of all places to be added to the listView
+        try{
+            MethodInformation mi = new MethodInformation(null, this, URL,"getNames",
+                    new Object[]{});
+            AsyncCollectionConnect ac = (AsyncCollectionConnect) new AsyncCollectionConnect().execute(mi);
+        } catch (Exception ex){
+            android.util.Log.w(this.getClass().getSimpleName(),"Exception creating adapter: "+
+                    ex.getMessage());
+        }
     }
 
     private void createPlaceLibrary() {

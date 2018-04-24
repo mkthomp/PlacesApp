@@ -20,6 +20,8 @@ public class MapActivity extends Activity implements OnMapReadyCallback, GoogleM
         DialogInterface.OnClickListener {
 
     private PlaceLibrary places;
+    private PlaceDescription selectedPlace;
+    private String placeName;
     private GoogleMap myMap;
     private EditText in;
     private LatLng point;
@@ -32,6 +34,12 @@ public class MapActivity extends Activity implements OnMapReadyCallback, GoogleM
         MapFragment mapFragment = (MapFragment) getFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        Bundle extras = getIntent().getExtras();
+
+        places = (PlaceLibrary)extras.getSerializable("places");
+        placeName = extras.getString("selected");
+        selectedPlace = places.get(placeName);
     }
 
     @Override
@@ -65,13 +73,12 @@ public class MapActivity extends Activity implements OnMapReadyCallback, GoogleM
     public void onMapReady(GoogleMap map) {
         myMap = map;
         myMap.setOnMapLongClickListener(this);
-//        for (String aKey : places.keySet()) {
-//            Place aPlace = places.get(aKey);
-//            map.addMarker(new MarkerOptions().position(new LatLng(aPlace.lat, aPlace.lon)).title(aKey));
-//        }
-//        Place tempe = places.get("ASU-Brickyard");
-        map.addMarker(new MarkerOptions().position(new LatLng(33.608979, -112.159469)).title("ASU-West"));
-        map.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(new LatLng(33.608979, -112.159469),
+        for (String aKey : places.getNames()) {
+            PlaceDescription aPlace = places.get(aKey);
+            map.addMarker(new MarkerOptions().position(new LatLng(aPlace.getLatitude(), aPlace.getLongitude())).title(aKey));
+        }
+        map.addMarker(new MarkerOptions().position(new LatLng(selectedPlace.getLatitude(), selectedPlace.getLongitude())).title(placeName));
+        map.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(new LatLng(selectedPlace.getLatitude(), selectedPlace.getLongitude()),
                 (float)9.0, (float)0.0, (float)0.0)));
 
     }
