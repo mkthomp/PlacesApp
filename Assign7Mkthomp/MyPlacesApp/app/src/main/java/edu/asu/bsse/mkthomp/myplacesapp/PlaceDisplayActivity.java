@@ -53,6 +53,7 @@ public class PlaceDisplayActivity extends AppCompatActivity {
     private PlaceDescription myPlace;
     private Button updateBtn, mapBtn;
     private AlertDialog deleteAlert;
+    private String URL = "http://10.0.2.2:8080";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,6 +172,16 @@ public class PlaceDisplayActivity extends AppCompatActivity {
             plcDB.execSQL(delete, new String[]{myPlaceName});
             plcDB.close();
             db.close();
+
+            try{
+                MethodInformation mi = new MethodInformation(this, URL,"remove",
+                        new Object[]{myPlaceName});
+                AsyncCollectionConnect ac = (AsyncCollectionConnect) new AsyncCollectionConnect().execute(mi);
+            } catch (Exception ex){
+                android.util.Log.w(this.getClass().getSimpleName(),"Exception creating adapter: "+
+                        ex.getMessage());
+            }
+
             Intent backToMain = new Intent(this, MainActivity.class);
             startActivity(backToMain);
         }catch(Exception e){

@@ -4,14 +4,12 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import java.util.Arrays;
 
 /**
  * Copyright (c) 2018 Mary Insua,
@@ -45,6 +43,7 @@ public class addPlaceActivity extends AppCompatActivity {
     private String nameToAdd, descToAdd, titleToAdd, addrToAdd, catToAdd;
     private Double latToAdd, lonToAdd, elevationToAdd;
     private Button addBtn;
+    private String URL = "http://10.0.2.2:8080";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,51 +73,81 @@ public class addPlaceActivity extends AppCompatActivity {
             PlaceDB db = new PlaceDB((Context)this);
             SQLiteDatabase plcDB = db.openDB();
             ContentValues hm = new ContentValues();
+            //JSONObject jo = new JSONObject();
+            PlaceDescription place = new PlaceDescription();
 
             if (name.getText() != null) {
                 nameToAdd = name.getText().toString();
             }else {nameToAdd = "";}
             hm.put("name", nameToAdd);
+            //jo.put("name", nameToAdd);
+            place.setName(nameToAdd);
 
             if (addrTitle.getText() != null) {
                 titleToAdd = addrTitle.getText().toString();
             }else {titleToAdd = "";}
             hm.put("addressTitle", titleToAdd);
+            //jo.put("addressTitle", titleToAdd);
+            place.setAddressTitle(titleToAdd);
 
             if (addrStreet.getText() != null) {
                 addrToAdd = addrStreet.getText().toString();
             }else {addrToAdd = "";}
             hm.put("addressStreet", addrToAdd);
+            //jo.put("addressStreet", addrToAdd);
+            place.setAddressStreet(addrToAdd);
 
             if (elevation.getText() != null && elevation.getText().toString() != "") {
                 elevationToAdd = Double.parseDouble(elevation.getText().toString());
             }else {elevationToAdd = 0.0;}
             hm.put("elevation", elevationToAdd);
+            //jo.put("elevation", elevationToAdd);
+            place.setElevation(elevationToAdd);
 
             if (lat.getText() != null && lat.getText().toString() != "") {
                 latToAdd = Double.parseDouble(lat.getText().toString());
             }else {latToAdd = 0.0;}
             hm.put("latitude", latToAdd);
+            //jo.put("latitude", latToAdd);
+            place.setLatitude(latToAdd);
 
             if (lon.getText() != null && lon.getText().toString() != "") {
                 lonToAdd = Double.parseDouble(lon.getText().toString());
             }else {lonToAdd = 0.0;}
             hm.put("longitude", lonToAdd);
+            //jo.put("longitude", lonToAdd);
+            place.setLongitude(lonToAdd);
 
             if (desc.getText() != null) {
                 descToAdd = desc.getText().toString();
             }else {descToAdd = "";}
             hm.put("description", descToAdd);
+            //jo.put("description", descToAdd);
+            place.setDescription(descToAdd);
 
             if (cat.getText() != null) {
                 catToAdd = cat.getText().toString();
             }else {catToAdd = "";}
             hm.put("category", catToAdd);
+            //jo.put("category", catToAdd);
+            place.setCategory(catToAdd);
+
+            //Object[] obj = new Object[]{};
+            //obj[0] = jo;
 
             plcDB.insert("places",null, hm);
             plcDB.close();
             db.close();
             String addedName = name.getText().toString();
+
+            try{
+                MethodInformation mi = new MethodInformation(this, URL,"add",
+                        new Object[]{place.toJSON()});
+                AsyncCollectionConnect ac = (AsyncCollectionConnect) new AsyncCollectionConnect().execute(mi);
+            } catch (Exception ex){
+                android.util.Log.w(this.getClass().getSimpleName(),"Exception creating adapter: "+
+                        ex.getMessage());
+            }
 
             Intent backToMain;
             backToMain = new Intent(this, MainActivity.class);

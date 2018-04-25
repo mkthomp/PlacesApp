@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by insuafamily on 4/23/18.
@@ -49,25 +50,29 @@ public class AsyncCollectionConnect extends AsyncTask<MethodInformation, Integer
         try {
             if (res.method.equals("getNames")) {
                 JSONObject jo = new JSONObject(res.resultAsJson);
+                JSONObject placesObj = new JSONObject();
                 JSONArray ja = jo.getJSONArray("result");
                 ArrayList<String> al = new ArrayList<String>();
                 for (int i = 0; i < ja.length(); i++) {
                     al.add(ja.getString(i));
                 }
                 String[] names = al.toArray(new String[0]);
-                res.parent.aa.clear();
-                for (int i = 0; i < names.length; i++) {
-                    res.parent.aa.add(names[i]);
-                }
-                res.parent.aa.notifyDataSetChanged();
+                Arrays.sort(names);
+//                res.parent.aa.clear();
+//                for (int i = 0; i < names.length; i++) {
+//                    res.parent.aa.add(names[i]);
+//                }
+//                res.parent.aa.notifyDataSetChanged();
                 if (names.length > 0){
                     try{
                         // got the list of place names from the server, so now create a new async task
                         // to get the student information about the first student and populate the UI with
                         // that student's information.
-                        MethodInformation mi = new MethodInformation(null, res.parent, res.urlString, "get",
-                                new String[]{names[0]});
-                        AsyncCollectionConnect ac = (AsyncCollectionConnect) new AsyncCollectionConnect().execute(mi);
+                        for (int i = 0; i < names.length; i++) {
+                            MethodInformation mi = new MethodInformation(null, res.parent, res.urlString, "get",
+                                    new String[]{names[i]});
+                            AsyncCollectionConnect ac = (AsyncCollectionConnect) new AsyncCollectionConnect().execute(mi);
+                        }
                     } catch (Exception ex){
                         android.util.Log.w(this.getClass().getSimpleName(),"Exception processing spinner selection: "+
                                 ex.getMessage());
@@ -76,15 +81,23 @@ public class AsyncCollectionConnect extends AsyncTask<MethodInformation, Integer
             } else if (res.method.equals("get")) {
                 JSONObject jo = new JSONObject(res.resultAsJson);
                 PlaceDescription aPlace = new PlaceDescription(jo.getJSONObject("result"));
-//                res.parent.studentidET.setText((new Integer(aStud.studentid)).toString());
-//                res.parent.nameET.setText(aStud.name);
+                res.parent.placesFromServer.addPlace(aPlace.getName() , aPlace);
             } else if (res.method.equals("add")){
                 try{
-                    // finished adding a place. refresh the list of students by going back to the server for names
+                    // finished adding a place. refresh the list of places by going back to the server for names
                     MethodInformation mi = new MethodInformation(null, res.parent, res.urlString, "getNames", new Object[]{ });
                     AsyncCollectionConnect ac = (AsyncCollectionConnect) new AsyncCollectionConnect().execute(mi);
                 } catch (Exception ex){
                     android.util.Log.w(this.getClass().getSimpleName(),"Exception processing getNames: "+
+                            ex.getMessage());
+                }
+            } else if (res.method.equals("remove")) {
+                try {
+                    // finished removing a place. refresh the list of places by going back to the server for names
+                    MethodInformation mi = new MethodInformation(null, res.parent, res.urlString, "getNames", new Object[]{});
+                    AsyncCollectionConnect ac = (AsyncCollectionConnect) new AsyncCollectionConnect().execute(mi);
+                } catch (Exception ex) {
+                    android.util.Log.w(this.getClass().getSimpleName(), "Exception processing getNames: " +
                             ex.getMessage());
                 }
             }

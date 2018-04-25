@@ -24,5 +24,6 @@
     <string name="dialog_text">Enter New Place Name</string>
     <string name="cancel">Cancel</string>
     <string name="ok">Ok</string>
-    <string name="map">View Map</string>
+    <string name="map">View On Map</string>
+    <string name="sync_with_server">Sync with Server</string>
 </resources>

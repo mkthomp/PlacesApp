@@ -127,15 +127,14 @@ public class PlaceDescription implements Serializable{
         this.addressStreet = addressStreet;
     }
 
-    public void setElevation(int elevation) {
-        this.elevation = elevation;
+    public void setElevation(Double elevation) {this.elevation = elevation;
     }
 
-    public void setLatitude(int latitude) {
+    public void setLatitude(Double latitude) {
         this.latitude = latitude;
     }
 
-    public void setLongitude(int longitude) {
+    public void setLongitude(Double longitude) {
         this.longitude = longitude;
     }
 

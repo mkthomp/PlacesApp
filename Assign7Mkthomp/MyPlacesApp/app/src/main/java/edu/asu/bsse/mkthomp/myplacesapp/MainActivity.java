@@ -11,12 +11,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Set;
 
 /**
  * Copyright (c) 2018 Mary Insua,
@@ -48,11 +50,13 @@ public class MainActivity extends AppCompatActivity implements ListView.OnItemCl
 
     private static final int SETTINGS_RESULT = 2;
     private ListView placesList;
-    private PlaceLibrary placesFromJSONfile, placesFromDatabase;
+    private Button syncButton;
+    public PlaceLibrary placesFromJSONfile, placesFromDatabase, placesFromServer;
     private ArrayList<String> al;
     private String[] placeNames;
     public ArrayAdapter<String> aa;
     private String URL = "http://10.0.2.2:8080";
+    public String[] plcNames;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +64,13 @@ public class MainActivity extends AppCompatActivity implements ListView.OnItemCl
         setContentView(R.layout.activity_main);
 
         placesList = (ListView)findViewById(R.id.placeListView);
+        syncButton = findViewById(R.id.syncBtn);
+        syncButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                syncDb();
+            }
+        });
 
         try {
             placesFromJSONfile = new PlaceLibrary(this);
@@ -73,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements ListView.OnItemCl
         placesList.setAdapter(aa);
         placesList.setOnItemClickListener(this);
 
+        placesFromServer = new PlaceLibrary();
         // initiate request to server to get the names of all places to be added to the listView
         try{
             MethodInformation mi = new MethodInformation(null, this, URL,"getNames",
@@ -95,9 +107,9 @@ public class MainActivity extends AppCompatActivity implements ListView.OnItemCl
                 place.setName(cursor.getString(0));
                 place.setAddressTitle(cursor.getString(1));
                 place.setAddressStreet(cursor.getString(2));
-                place.setElevation((int) cursor.getDouble(3));
-                place.setLatitude((int) cursor.getDouble(4));
-                place.setLongitude((int) cursor.getDouble(5));
+                place.setElevation(cursor.getDouble(3));
+                place.setLatitude(cursor.getDouble(4));
+                place.setLongitude(cursor.getDouble(5));
                 place.setDescription(cursor.getString(6));
                 place.setCategory(cursor.getString(7));
                 placesFromDatabase.addPlace(place.getName(), place);
@@ -139,6 +151,19 @@ public class MainActivity extends AppCompatActivity implements ListView.OnItemCl
         }
     }
 
+    private void syncDb() {
+        PlaceDescription place;
+        if (placesFromServer != null) {
+            Set<String> keys = placesFromServer.placeCollection.keySet();
+            for (String key : keys) {
+                place = placesFromServer.get(key);
+                debug("PlacesFromServer --> checkPlaces", "PlaceLibraryFromServer has PlaceName: " + place.getName() +
+                        "\tAddressTitle: " + place.getAddressTitle() + "\tAddressStreet: " + place.getAddressStreet() + "\tElevation: " + place.getElevation()
+                        + "\tLatitude: " + place.getLatitude() + "\tLongitude: " + place.getLongitude() + "\tDescription: " + place.getDescription() + "\tCategory: " + place.getCategory());
+            }
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         android.util.Log.d(this.getClass().getSimpleName(), "called onCreateOptionsMenu()");
@@ -176,14 +201,16 @@ public class MainActivity extends AppCompatActivity implements ListView.OnItemCl
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id){
-        //String[] studNames = placesFromJSONfile.getNames();
-        String[] studNames = placesFromDatabase.getNames();
-        Arrays.sort(studNames);
-        if(position >= 0 && position <= studNames.length) {
+        //String[] plcNames = placesFromJSONfile.getNames();
+        String[] plcNames = placesFromDatabase.getNames();
+        Arrays.sort(plcNames);
+        //if(position >= 0 && position <= plcNames.length) {
+        if(position >= 0 && position <= aa.getCount()) {
             Intent displayPlace = new Intent(this, PlaceDisplayActivity.class);
             //displayPlace.putExtra("places", placesFromJSONfile);
             displayPlace.putExtra("places", placesFromDatabase);
-            displayPlace.putExtra("selected", studNames[position]);
+            //displayPlace.putExtra("selected", plcNames[position]);
+            displayPlace.putExtra("selected", aa.getItem(position));
             this.startActivityForResult(displayPlace, 1);
         }
     }

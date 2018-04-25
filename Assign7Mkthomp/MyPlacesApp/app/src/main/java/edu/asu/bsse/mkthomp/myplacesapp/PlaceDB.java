@@ -6,6 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -43,11 +45,22 @@ public class PlaceDB extends SQLiteOpenHelper{
     private String dbPath;
     private SQLiteDatabase placesDB;
     private final Context context;
+    private boolean getFromServer = false;
+    private JSONObject plcData;
 
     public PlaceDB(Context context){
         super(context,dbName, null, DATABASE_VERSION);
         this.context = context;
         dbPath = context.getFilesDir().getPath()+"/";
+        android.util.Log.d(this.getClass().getSimpleName(),"dbpath: "+dbPath);
+    }
+
+    public PlaceDB(Context context, JSONObject obj){
+        super(context,dbName, null, DATABASE_VERSION);
+        getFromServer = true;
+        plcData = obj;
+        this.context = context;
+        dbPath = context.getFilesDir().getPath()+"/serverdb/";
         android.util.Log.d(this.getClass().getSimpleName(),"dbpath: "+dbPath);
     }
 
@@ -121,25 +134,29 @@ public class PlaceDB extends SQLiteOpenHelper{
 
     public void copyDB() throws IOException{
         try {
+            // only copy the database if it doesn't already exist in my database directory
             if(!checkDB()){
-                // only copy the database if it doesn't already exist in my database directory
-                debug("CourseDB --> copyDB", "checkDB returned false, starting copy");
-                InputStream ip =  context.getResources().openRawResource(R.raw.placesdb);
-                // make sure the database path exists. if not, create it.
-                File aFile = new File(dbPath);
-                if(!aFile.exists()){
-                    aFile.mkdirs();
+                if(getFromServer) {
+
+                }else {
+                    debug("CourseDB --> copyDB", "checkDB returned false, starting copy");
+                    InputStream ip = context.getResources().openRawResource(R.raw.placesdb);
+                    // make sure the database path exists. if not, create it.
+                    File aFile = new File(dbPath);
+                    if (!aFile.exists()) {
+                        aFile.mkdirs();
+                    }
+                    String op = dbPath + dbName + ".db";
+                    OutputStream output = new FileOutputStream(op);
+                    byte[] buffer = new byte[1024];
+                    int length;
+                    while ((length = ip.read(buffer)) > 0) {
+                        output.write(buffer, 0, length);
+                    }
+                    output.flush();
+                    output.close();
+                    ip.close();
                 }
-                String op=  dbPath  +  dbName +".db";
-                OutputStream output = new FileOutputStream(op);
-                byte[] buffer = new byte[1024];
-                int length;
-                while ((length = ip.read(buffer))>0){
-                    output.write(buffer, 0, length);
-                }
-                output.flush();
-                output.close();
-                ip.close();
             }
         } catch (IOException e) {
             android.util.Log.w("CourseDB --> copyDB", "IOException: "+e.getMessage());
