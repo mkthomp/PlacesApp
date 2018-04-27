@@ -45,7 +45,6 @@ public class PlaceDB extends SQLiteOpenHelper{
     private String dbPath;
     private SQLiteDatabase placesDB;
     private final Context context;
-    private boolean getFromServer = false;
     private JSONObject plcData;
 
     public PlaceDB(Context context){
@@ -57,7 +56,6 @@ public class PlaceDB extends SQLiteOpenHelper{
 
     public PlaceDB(Context context, JSONObject obj){
         super(context,dbName, null, DATABASE_VERSION);
-        getFromServer = true;
         plcData = obj;
         this.context = context;
         dbPath = context.getFilesDir().getPath()+"/serverdb/";
@@ -98,7 +96,7 @@ public class PlaceDB extends SQLiteOpenHelper{
                         debug("PlaceDB --> checkDB","check for places table result set is null");
                     }else{
                         tabChk.moveToNext();
-                        debug("PlaceDB --> checkDB","check for course table result set is: " +
+                        debug("PlaceDB --> checkDB","check for place table result set is: " +
                                 ((tabChk.isAfterLast() ? "empty" : (String) tabChk.getString(0))));
                         crsTabExists = !tabChk.isAfterLast();
                     }
@@ -136,9 +134,7 @@ public class PlaceDB extends SQLiteOpenHelper{
         try {
             // only copy the database if it doesn't already exist in my database directory
             if(!checkDB()){
-                if(getFromServer) {
 
-                }else {
                     debug("CourseDB --> copyDB", "checkDB returned false, starting copy");
                     InputStream ip = context.getResources().openRawResource(R.raw.placesdb);
                     // make sure the database path exists. if not, create it.
@@ -156,7 +152,6 @@ public class PlaceDB extends SQLiteOpenHelper{
                     output.flush();
                     output.close();
                     ip.close();
-                }
             }
         } catch (IOException e) {
             android.util.Log.w("CourseDB --> copyDB", "IOException: "+e.getMessage());
@@ -168,6 +163,14 @@ public class PlaceDB extends SQLiteOpenHelper{
         if(checkDB()) {
             placesDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READWRITE);
             debug("PlaceDB --> openDB", "opened db at path: " + placesDB.getPath());
+//            try {
+//                this.copyDB();
+//                placesDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READWRITE);
+//                debug("PlaceDB --> openDB", "opened db at path: " + placesDB.getPath());
+//            }catch (Exception e) {
+//                android.util.Log.w(this.getClass().getSimpleName(), "unable to copy and open db: " + e.getMessage());
+//            }
+
         }else{
             try {
                 this.copyDB();

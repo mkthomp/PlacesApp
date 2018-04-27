@@ -47,8 +47,18 @@ import java.util.Set;
 
 public class MainActivity extends AppCompatActivity implements ListView.OnItemClickListener {
     private static final boolean debugon = true;
-
     private static final int SETTINGS_RESULT = 2;
+    private static final String TBLNAME = "places";
+    private static final String NAME = "name";
+    private static final String TITLE = "addressTitle";
+    private static final String STREET = "addressStreet";
+    private static final String DESC = "description";
+    private static final String CAT = "category";
+    private static final String LON = "longitude";
+    private static final String LAT = "latitude";
+    private static final String ELEV = "elevation";
+
+
     private ListView placesList;
     private Button syncButton;
     public PlaceLibrary placesFromJSONfile, placesFromDatabase, placesFromServer;
@@ -94,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements ListView.OnItemCl
             android.util.Log.w(this.getClass().getSimpleName(),"Exception creating adapter: "+
                     ex.getMessage());
         }
+
     }
 
     private void createPlaceLibrary() {
@@ -117,6 +128,8 @@ public class MainActivity extends AppCompatActivity implements ListView.OnItemCl
                         "\tAddressTitle: "+place.getAddressTitle()+"\tAddressStreet: "+place.getAddressStreet()+"\tElevation: "+place.getElevation()
                         +"\tLatitude: "+place.getLatitude()+"\tLongitude: "+place.getLongitude()+"\tDescription: "+place.getDescription() +"\tCategory: "+place.getCategory());
             }
+            plcDB.close();
+            db.close();
         }catch (Exception e) {
             android.util.Log.w(this.getClass().getSimpleName(), "unable to create place library");
         }
@@ -146,6 +159,8 @@ public class MainActivity extends AppCompatActivity implements ListView.OnItemCl
             while(cursor.moveToNext()) {
                 al.add(cursor.getString(0));
             }
+            plcDB.close();
+            db.close();
         }catch(Exception e) {
             android.util.Log.w(this.getClass().getSimpleName(), "unable to prepare adapter");
         }
@@ -153,15 +168,74 @@ public class MainActivity extends AppCompatActivity implements ListView.OnItemCl
 
     private void syncDb() {
         PlaceDescription place;
-        if (placesFromServer != null) {
-            Set<String> keys = placesFromServer.placeCollection.keySet();
-            for (String key : keys) {
-                place = placesFromServer.get(key);
-                debug("PlacesFromServer --> checkPlaces", "PlaceLibraryFromServer has PlaceName: " + place.getName() +
-                        "\tAddressTitle: " + place.getAddressTitle() + "\tAddressStreet: " + place.getAddressStreet() + "\tElevation: " + place.getElevation()
-                        + "\tLatitude: " + place.getLatitude() + "\tLongitude: " + place.getLongitude() + "\tDescription: " + place.getDescription() + "\tCategory: " + place.getCategory());
+        try {
+            PlaceDB db = new PlaceDB(this);
+            SQLiteDatabase plcDB = db.openDB();
+
+            plcDB.execSQL("DROP TABLE " + "places;");
+            plcDB.execSQL("CREATE TABLE " + TBLNAME + " (" +
+                    NAME + " TEXT PRIMARY KEY, " +
+                    TITLE + " TEXT, " +
+                    STREET + " TEXT, " +
+                    ELEV + " DOUBLE, " +
+                    LAT + " DOUBLE, " +
+                    LON + " DOUBLE, " +
+                    DESC + " TEXT, " +
+                    CAT + " TEXT)"
+            );
+
+            plcDB.execSQL("INSERT INTO Places VALUES (\"Space Needle\", \"Title\",\"1234 Street\",1.0, 2.0, 3.0, \"description\",\"category\")");
+
+            if (placesFromServer != null) {
+                debug("PlacesFromServer ---> checkLocation", "adding places from server to new database");
+                aa.clear();
+                debug("PlacesFromServer ---> checkLocation", "cleared array adapter");
+                Set<String> keys = placesFromServer.placeCollection.keySet();
+                debug("PlacesFromServer ---> checkLocation", "created key set");
+                for (String key : keys) {
+                    place = placesFromServer.get(key);
+                    debug("PlacesFromServer ---> checkLocation", "created PlaceDescription: " + place.getName());
+
+                    debug("PlacesFromServer --> checkPlaces", "PlaceLibraryFromServer has PlaceName: " + place.getName() +
+                            "\tAddressTitle: " + place.getAddressTitle() + "\tAddressStreet: " + place.getAddressStreet() + "\tElevation: " + place.getElevation()
+                            + "\tLatitude: " + place.getLatitude() + "\tLongitude: " + place.getLongitude() + "\tDescription: " + place.getDescription() + "\tCategory: " + place.getCategory());
+//                    ContentValues hm = new ContentValues();
+//                    hm.put("name", place.getName());
+//                    hm.put("addressTitle", place.getAddressTitle());
+//                    hm.put("addressStreet", place.getAddressStreet());
+//                    hm.put("elevation", place.getElevation());
+//                    hm.put("latitude", place.getLatitude());
+//                    hm.put("longitude", place.getLongitude());
+//                    hm.put("description", place.getDescription());
+//                    hm.put("category", place.getCategory());
+//                    plcDB.insert("places", null, hm);
+
+                    debug("PlacesFromServer ---> checkLocation", "about to insert " + place.getName() + " into place database");
+                    plcDB.execSQL("INSERT INTO places (name, addressTitle, addressStreet, elevation, latitude, longitude, description, category) " +
+                            "VALUES (\"" + place.getName() + "\", \"" + place.getAddressTitle() + "\", \"" + place.getAddressStreet() + "\", " + place.getElevation() +
+                            ", " + place.getLatitude() + ", " + place.getLongitude() + ", \"" + place.getDescription() + "\", \"" + place.getCategory() + "\")");
+                    debug("PlacesFromServer ---> checkLocation", "inserted " + place.getName() + " into place database");
+                    aa.add(place.getName());
+
+                    debug("PlacesFromServer ---> checkLocation", "added " + place.getName() + " into the array adapter");
+
+                }
+                aa.notifyDataSetChanged();
+                debug("PlacesFromServer ---> checkLocation", "notified array adapter");
             }
+
+//            this.prepareAdapter();
+//            this.createPlaceLibrary();
+//            aa = new ArrayAdapter(this, R.layout.place_list_item, R.id.place_name, al);
+//            placesList.setAdapter(aa);
+//            placesList.setOnItemClickListener(this);
+
+            plcDB.close();
+            db.close();
+        }catch(Exception e) {
+            android.util.Log.w(this.getClass().getSimpleName(), "unable to sync database" + e.getMessage());
         }
+
     }
 
     @Override
